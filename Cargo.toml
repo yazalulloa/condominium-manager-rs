@@ -1,5 +1,5 @@
 [package]
-name = "leptos_start"
+name = "condominum_manager_rs"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,43 +7,50 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-actix-files = { version = "0.6", optional = true }
-actix-web = { version = "4", optional = true, features = ["macros"] }
+actix-files = { version = "0.6.2", optional = true }
+actix-web = { version = "4.3.1", optional = true, features = ["macros"] }
 console_error_panic_hook = "0.1"
 cfg-if = "1"
-leptos = { version = "0.3", default-features = false, features = [
-  "serde",
+leptos = { version = "0.3.1", default-features = false, features = [
+    "serde",
 ] }
-leptos_meta = { version = "0.3", default-features = false }
-leptos_actix = { version = "0.3", optional = true }
-leptos_router = { version = "0.3", default-features = false }
+leptos_actix = { version = "0.3.1", optional = true }
+leptos_meta = { version = "0.3.1", default-features = false }
+leptos_router = { version = "0.3.1", default-features = false }
 wasm-bindgen = "=0.2.87"
-mongodb = "2.5.0"
-config-file = "0.2.3"
 serde = "1.0.164"
 tokio = "1.28.2"
-serde_yaml = "0.9.21"
+#serde_yaml = "0.9.21"
 dotenv = "0.15.0"
-datetime = "0.5.2"
 strum = "0.24.1"
 strum_macros = "0.24.3"
 once_cell = "1.18.0"
+futures = "0.3.28"
+chrono = { version = "0.4.26", features = ["serde"] }
+getrandom = { version = "0.2.10", features = ["js"] }
+mongodb = { version = "2.5.0", default-features = false, features = ["tokio-runtime", "bson-chrono-0_4", ], optional = true }
 
 [features]
-csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
+default = ["ssr"]
+# csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = [
-  "dep:actix-files",
-  "dep:actix-web",
-  "dep:leptos_actix",
-  "leptos/ssr",
-  "leptos_meta/ssr",
-  "leptos_router/ssr",
+    "dep:actix-files",
+    "dep:actix-web",
+    "dep:mongodb",
+    "leptos/ssr",
+    "leptos_actix",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
 ]
+
+[package.metadata.cargo-all-features]
+denylist = ["actix-files", "actix-web", "leptos_actix", "mongodb"]
+skip_feature_sets = [["csr", "ssr"], ["csr", "hydrate"], ["ssr", "hydrate"]]
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name   
-output-name = "leptos_start"
+output-name = "condominum_manager_rs"
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"
 # The site-root relative folder where all compiled output (JS, WASM and CSS) is written

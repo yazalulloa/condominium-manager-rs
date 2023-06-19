@@ -46,12 +46,12 @@ After running a `cargo leptos build --release` the minimum files needed are:
 
 Copy these files to your remote server. The directory structure should be:
 ```text
-leptos_start
+condominum_manager_rs
 site/
 ```
 Set the following enviornment variables (updating for your project as needed):
 ```text
-LEPTOS_OUTPUT_NAME="leptos_start"
+LEPTOS_OUTPUT_NAME="condominum_manager_rs"
 LEPTOS_SITE_ROOT="site"
 LEPTOS_SITE_PKG_DIR="pkg"
 LEPTOS_SITE_ADDR="127.0.0.1:3000"

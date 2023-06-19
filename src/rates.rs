@@ -1,8 +1,8 @@
 use std::fmt;
 use std::fmt::Formatter;
 
+use chrono::{DateTime, Utc};
 use mongodb::bson;
-use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
 
@@ -12,9 +12,12 @@ pub struct Rate {
     rate: bson::Decimal128,
     from_currency: Currency,
     to_currency: Currency,
-    date_of_rate: bson::DateTime,
+    #[serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
+    date_of_rate: DateTime<Utc>,
     source: Source,
-    created_at: bson::DateTime,
+    #[serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
+    pub created_at: DateTime<Utc>,
+    //created_at: bson::DateTime,
     description: Option<String>,
 }
 
