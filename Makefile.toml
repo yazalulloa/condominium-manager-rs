@@ -1,0 +1,20 @@
+extend = { path = "../cargo-make/main.toml" }
+
+[tasks.build]
+command = "cargo"
+args = ["+nightly", "build-all-features"]
+install_crate = "cargo-all-features"
+
+[tasks.check]
+clear = true
+dependencies = ["check-debug", "check-release"]
+
+[tasks.check-debug]
+command = "cargo"
+args = ["+nightly", "check-all-features"]
+install_crate = "cargo-all-features"
+
+[tasks.check-release]
+command = "cargo"
+args = ["+nightly", "check-all-features", "--release"]
+install_crate = "cargo-all-features"

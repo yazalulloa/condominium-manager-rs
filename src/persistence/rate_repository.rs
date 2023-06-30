@@ -4,11 +4,11 @@ use mongodb::bson::extjson::de::Error;
 use mongodb::Collection;
 use mongodb::options::{FindOneOptions, FindOptions};
 
-use crate::rates::Rate;
+use crate::models::rates::Rate;
 
 #[derive(Clone, Debug)]
 pub struct RateRepository {
-    pub(crate) col: Collection<Rate>,
+    pub col: Collection<Rate>,
 }
 
 impl RateRepository {
