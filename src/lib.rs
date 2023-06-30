@@ -1,10 +1,10 @@
 use cfg_if::cfg_if;
 
 pub mod app;
+pub mod domain;
 #[cfg(feature = "ssr")]
 pub mod persistence;
-pub mod models;
-
+pub mod views;
 
 cfg_if! {
 if #[cfg(feature = "hydrate")] {

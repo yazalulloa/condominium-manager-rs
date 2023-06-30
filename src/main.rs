@@ -1,18 +1,19 @@
+pub mod app;
+pub mod domain;
 #[cfg(feature = "ssr")]
 pub mod persistence;
-pub mod app;
-pub mod models;
+pub mod views;
 
 #[cfg(feature = "ssr")]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     use actix_files::Files;
     use actix_web::*;
+    use condominum_manager_rs::app::*;
+    use condominum_manager_rs::persistence::db::print_collection_names;
+    use dotenv::dotenv;
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
-    use condominum_manager_rs::app::*;
-    use dotenv::dotenv;
-    use condominum_manager_rs::persistence::db::print_collection_names;
     use tokio::runtime::Handle;
 
     dotenv().ok();

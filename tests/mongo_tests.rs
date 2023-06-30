@@ -5,14 +5,13 @@ pub mod mongo_tests {
     use std::sync::Once;
 
     use dotenv::dotenv;
-    use mongodb::bson::{Decimal128, doc};
+    use mongodb::bson::{doc, Decimal128};
     use mongodb::options::FindOptions;
 
-    use condominum_manager_rs::models::rates::Rate;
     use condominum_manager_rs::persistence::db::{database, DB};
+    use condominum_manager_rs::persistence::rate_repository::Rate;
 
     static INIT: Once = Once::new();
-
 
     pub fn initialize() {
         INIT.call_once(|| {
@@ -25,7 +24,11 @@ pub mod mongo_tests {
     pub async fn list_collection_names() {
         dotenv().ok();
         let db = database().await;
-        for collection in db.list_collection_names(None).await.expect("error list_collection_names") {
+        for collection in db
+            .list_collection_names(None)
+            .await
+            .expect("error list_collection_names")
+        {
             println!("{}", collection);
         }
     }

@@ -1,10 +1,16 @@
+use std::fmt;
+use std::fmt::Formatter;
+
+use chrono::{DateTime, Utc};
 use futures::TryStreamExt;
+use mongodb::bson;
 use mongodb::bson::doc;
 use mongodb::bson::extjson::de::Error;
 use mongodb::Collection;
 use mongodb::options::{FindOneOptions, FindOptions};
+use serde::{Deserialize, Serialize};
 
-use crate::models::rates::Rate;
+use crate::domain::domain::{Currency, Source};
 
 #[derive(Clone, Debug)]
 pub struct RateRepository {
@@ -40,3 +46,28 @@ impl RateRepository {
         cursor.try_collect().await.unwrap_or_else(|_| vec![])
     }
 }
+
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct Rate {
+    pub _id: u64,
+    pub rate: bson::Decimal128,
+    pub from_currency: Currency,
+    pub to_currency: Currency,
+    #[serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
+    pub date_of_rate: DateTime<Utc>,
+    pub source: Source,
+    #[serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
+    pub created_at: DateTime<Utc>,
+    //created_at: bson::DateTime,
+    pub description: Option<String>,
+}
+
+impl fmt::Display for Rate {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let description = self.description.as_ref().map_or("", |n| n);
+        write!(f, "Rate {} {} {} {} {} {} {}", self._id, self.rate, self.from_currency.to_string(), self.date_of_rate.to_string(),
+               self.source.to_string(), self.created_at.to_string(), description)
+    }
+}
+

@@ -2,18 +2,19 @@ use cfg_if::cfg_if;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use crate::models::rates::Rate;
+
+use crate::views::rate_view_service::ViewItemRate;
 
 cfg_if! {
     if #[cfg(feature = "ssr")] {
 
-use crate::persistence::db::DB;
+use crate::views::rate_view_service::get_view_item_rate;
 
 
-         pub async fn db_get_rates(page: i64, page_size: i64)  -> Result<Vec<Rate>, ServerFnError> {
-             let repo = DB::init().await.unwrap().rates;
-    let vec = repo.list(page, page_size).await;
-    Ok(vec)
+
+         pub async fn db_get_rates(page: i64, page_size: i64)  -> Result<Vec<ViewItemRate>, ServerFnError> {
+         let vec = get_view_item_rate(page, page_size).await;
+         Ok(vec)
         }
 
 
@@ -22,7 +23,7 @@ use crate::persistence::db::DB;
 }
 
 #[server(GetRates, "/api")]
-pub async fn get_rates(cx: Scope) -> Result<Vec<Rate>, ServerFnError> {
+pub async fn get_rates(cx: Scope) -> Result<Vec<ViewItemRate>, ServerFnError> {
     // this is just an example of how to access server context injected in the handlers
     let req = use_context::<actix_web::HttpRequest>(cx);
 
@@ -99,12 +100,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         </Router>
     }
 }
-/*
-{todo.rate.to_string()}
-{todo.from_currency.to_string()}
-{todo.to_currency.to_string()}
-{todo.created_at.to_string()}
-{todo.date_of_rate.to_string()}*/
+
 
 /// Renders the home page of your application.
 #[component]
@@ -114,13 +110,13 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
     let on_click = move |_| set_count.update(|count| *count += 1);
 
 
-     let rates = create_resource(cx, move || (), move |_| get_rates(cx));
+    let rates = create_resource(cx, move || (), move |_| get_rates(cx));
 
     view! {
             cx,
             <h1>"Welcome to Leptos!"</h1>
             <button on:click=on_click>"Click Me: " {count}</button>
-    /*<Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
+    <Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
                     {move || {
                         let existing_todos = {
                             move || {
@@ -138,10 +134,16 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
                                                     .map(move |rate| {
                                                         view! {
                                                             cx,
-                                                            <li>
+                                                            <div>
                                                       {rate._id}
+                                                      {rate.rate}
+                                                      {rate.from_currency.to_string()}
+                                                      {rate.to_currency.to_string()}
+                                                      {rate.date_of_rate}
+                                                      {rate.source.to_string()}
+                                                      {rate.created_at}
 
-                                                            </li>
+                                                            </div>
                                                         }
                                                     })
                                                     .collect_view(cx)
@@ -160,7 +162,7 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
                         }
                     }
                 }
-                </Transition>*/
+                </Transition>
         }
 }
 

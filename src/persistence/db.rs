@@ -4,8 +4,7 @@ use mongodb::{Client, Collection, Database};
 use mongodb::options::ClientOptions;
 use once_cell::sync::OnceCell;
 
-use crate::models::rates::Rate;
-use crate::persistence::rate_repository::RateRepository;
+use crate::persistence::rate_repository::{Rate, RateRepository};
 
 static MONGODB: OnceCell<Database> = OnceCell::new();
 
