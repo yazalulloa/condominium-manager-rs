@@ -10,6 +10,7 @@ use crate::persistence::db::DB;
 use crate::persistence::rate_repository::Rate;
 
 pub async fn get_view_item_rate(page: i64, page_size: i64) -> Vec<ViewItemRate> {
+            println!("get_view_item_rate");
     let repo = DB::init().await.unwrap().rates;
     repo.list(page, page_size).await.into_iter().map(|rate| to_view_item(rate)).collect::<Vec<ViewItemRate>>()
 }

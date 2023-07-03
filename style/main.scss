@@ -1,4 +1,71 @@
+* {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+}
+
 body {
+  /*   height: 100%;
+    width: 100%; */
 	font-family: sans-serif;
 	text-align: center;
+ // height: 100%;
+ // width: 100%;
+	//max-height: 100vh;
+    //max-width: 100%;
+    //overflow: hidden;
+    margin: 0 auto;
 }
+
+.rates-view {
+  height: 100vh;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-basis: auto;
+
+  background-color: orange;
+}
+
+.rates-view .header {
+ flex: 0 0 auto;
+}
+
+.rates-view .footer {
+ flex: 0 0 auto;
+}
+
+.rates-view .table-div {
+  flex: 1 1 auto;
+  padding: 2px;
+  background-color: blue;
+  // height: calc(100vh - 20px); /* Subtract 20px for padding, margin, etc. */
+  overflow-y: scroll; /* Enable vertical scrolling */
+}
+
+.table-data {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Style the counter cards */
+.card {
+  display: flex;
+  //width: 100%;
+  flex-wrap: wrap;
+  flex-direction: row;
+  flex-basis: auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  margin: 6px;
+  text-align: center;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+  gap: 8px;
+}
+
+
+
+

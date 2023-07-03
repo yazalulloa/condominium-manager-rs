@@ -31,7 +31,7 @@ pub async fn get_rates(cx: Scope) -> Result<Vec<ViewItemRate>, ServerFnError> {
         println!("req.path = {:#?}", req.path());
     }
 
-    db_get_rates(1, 10).await
+    db_get_rates(1, 30).await
 }
 
 /*
@@ -114,9 +114,13 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
 
     view! {
             cx,
-            <h1>"Welcome to Leptos!"</h1>
+           <div class="rates-view">
+        <div class="header">
+         <h1>"Welcome to Leptos!"</h1>
             <button on:click=on_click>"Click Me: " {count}</button>
-    <Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
+        </div>
+   <div class="table-div">
+         <Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
                     {move || {
                         let existing_todos = {
                             move || {
@@ -127,26 +131,40 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
                                         }
                                         Ok(rates) => {
                                             if rates.is_empty() {
-                                                view! { cx, <p>"No tasks were found."</p> }.into_view(cx)
+                                                view! { cx, <p>"No rates were found."</p> }.into_view(cx)
                                             } else {
-                                                rates
-                                                    .into_iter()
+
+                                            rates
+                                                .into_iter()
                                                     .map(move |rate| {
                                                         view! {
                                                             cx,
-                                                            <div>
-                                                      {rate._id}
-                                                      {rate.rate}
-                                                      {rate.from_currency.to_string()}
-                                                      {rate.to_currency.to_string()}
-                                                      {rate.date_of_rate}
-                                                      {rate.source.to_string()}
-                                                      {rate.created_at}
+                                                            <div class="card">
+                                                      <span>{rate._id}</span>
+                                                      <span>{rate.rate}</span>
+                                                      <span>{rate.from_currency.to_string()}</span>
+                                                      <span>{rate.to_currency.to_string()}</span>
+                                                      <span>{rate.date_of_rate}</span>
+                                                      <span>{rate.source.to_string()}</span>
+                                                      <span>{rate.created_at}</span>
 
                                                             </div>
                                                         }
                                                     })
                                                     .collect_view(cx)
+
+                                           /* view! {
+                                                cx,
+                                               <div class="table-data">
+                                                /* <table class="table">
+                                                <tbody>
+                                                 <tr>*/
+                                                {rows}
+                                               /* </tr>
+                                                </tbody>
+                                                </table>*/
+                                                </div>
+                                            }.into_view(cx)*/
                                             }
                                         }
                                     })
@@ -156,13 +174,20 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
 
                         view! {
                             cx,
-                            <ul>
+                            <div>
                                 {existing_todos}
-                            </ul>
+                            </div>
                         }
                     }
                 }
                 </Transition>
+        </div>
+
+        <div class="footer">
+         <h1>"Welcome to Leptos!"</h1>
+            <button on:click=on_click>"Click Me: " {count}</button>
+        </div>
+        </div>
         }
 }
 
