@@ -101,7 +101,6 @@ pub fn App(cx: Scope) -> impl IntoView {
     }
 }
 
-
 /// Renders the home page of your application.
 #[component]
 pub fn HomePage(cx: Scope) -> impl IntoView {
@@ -109,86 +108,167 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
     let (count, set_count) = create_signal(cx, 0);
     let on_click = move |_| set_count.update(|count| *count += 1);
 
-
     let rates = create_resource(cx, move || (), move |_| get_rates(cx));
 
+    let double_count = move || count() * 2;
+
     view! {
-            cx,
-           <div class="rates-view">
-        <div class="header">
-         <h1>"Welcome to Leptos!"</h1>
-            <button on:click=on_click>"Click Me: " {count}</button>
-        </div>
-   <div class="table-div">
-         <Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
-                    {move || {
-                        let existing_todos = {
-                            move || {
-                                rates.read(cx)
-                                    .map(move |rates| match rates {
-                                        Err(e) => {
-                                            view! { cx, <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_view(cx)
-                                        }
-                                        Ok(rates) => {
-                                            if rates.is_empty() {
-                                                view! { cx, <p>"No rates were found."</p> }.into_view(cx)
-                                            } else {
+               cx,
+              <div class="rates-view">
+           <div class="header">
+            <h1>"Welcome to Leptos!"</h1>
+               <button
+                class=("button-20", move || count() % 2 == 1)
+                class:red=move || count() % 2 == 1
+                on:click=on_click>"Click Me: " {count}
 
-                                            rates
-                                                .into_iter()
-                                                    .map(move |rate| {
+                </button>
+                <br/>
+                <ProgressBar progress=count/>
+            <br/>
+            <ProgressBar max=50 progress=count/>
+            <ProgressBar max=100 progress=Signal::derive(cx, double_count)/>
+        <p>"Count: " {count}</p>
+        <p>
+        "Double Count: "
+        // and again here
+        {double_count}
+    </p>
+           </div>
+      <div class="table-div">
+            <Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
+                       {move || {
+                           let existing_todos = {
+                               move || {
+                                   rates.read(cx)
+                                       .map(move |rates| match rates {
+                                           Err(e) => {
+                                               view! { cx, <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_view(cx)
+                                           }
+                                           Ok(rates) => {
+                                               if rates.is_empty() {
+                                                   view! { cx, <p>"No rates were found."</p> }.into_view(cx)
+                                               } else {
+
+                                               rates
+                                                   .into_iter()
+                                                       .map(move |rate| {
+
                                                         view! {
-                                                            cx,
-                                                            <div class="card">
-                                                      <span>{rate._id}</span>
-                                                      <span>{rate.rate}</span>
-                                                      <span>{rate.from_currency.to_string()}</span>
-                                                      <span>{rate.to_currency.to_string()}</span>
-                                                      <span>{rate.date_of_rate}</span>
-                                                      <span>{rate.source.to_string()}</span>
-                                                      <span>{rate.created_at}</span>
-
-                                                            </div>
+                                                                  cx,
+                                                        <RateCard item=rate/>
                                                         }
-                                                    })
-                                                    .collect_view(cx)
 
-                                           /* view! {
-                                                cx,
-                                               <div class="table-data">
-                                                /* <table class="table">
-                                                <tbody>
-                                                 <tr>*/
-                                                {rows}
-                                               /* </tr>
-                                                </tbody>
-                                                </table>*/
-                                                </div>
-                                            }.into_view(cx)*/
-                                            }
-                                        }
-                                    })
-                                    .unwrap_or_default()
-                            }
-                        };
+                                                       })
+                                                       .collect_view(cx)
+                                               }
+                                           }
+                                       })
+                                       .unwrap_or_default()
+                               }
+                           };
 
-                        view! {
-                            cx,
-                            <div>
-                                {existing_todos}
-                            </div>
+                           view! {
+                               cx,
+                               <div>
+                                   {existing_todos}
+                               </div>
+                           }
+                       }
+                   }
+                   </Transition>
+           </div>
+
+           <div class="footer">
+            <h1>"Welcome to Leptos!"</h1>
+               <button on:click=on_click>"Click Me: " {count}</button>
+           </div>
+           </div>
+           }
+}
+
+#[component]
+fn RateCard(cx: Scope, item: ViewItemRate) -> impl IntoView {
+    view! {
+          cx,
+          <div class="card">
+    <span>{item._id}</span>
+    <span>{item.rate}</span>
+    <span>{item.from_currency.to_string()}</span>
+    <span>{item.to_currency.to_string()}</span>
+    <span>{item.date_of_rate}</span>
+    <span>{item.source.to_string()}</span>
+    <span>{item.created_at}</span>
+
+          </div>
+      }
+}
+
+/// Shows progress toward a goal.
+#[component]
+fn ProgressBar(
+    cx: Scope,
+    /// The maximum value of the progress bar.
+    #[prop(default = 100)]
+    max: u16,
+    /// How much progress should be displayed.
+    #[prop(into)]
+    progress: Signal<i32>,
+) -> impl IntoView {
+    view! { cx,
+        <progress
+        max=max
+            // hmm... where will we get this from?
+            value=progress
+        />
+    }
+}
+
+#[component]
+fn RateList(cx: Scope, array: Vec<ViewItemRate>) -> impl IntoView {
+    let initial_rates = array
+        .into_iter()
+        .map(|rate| (rate, create_signal(cx, rate)))
+        .collect::<Vec<_>>();
+
+    let (rates, set_rates) = create_signal(cx, initial_rates);
+
+    view! { cx,
+        <div>
+
+                // The <For/> component is central here
+                // This allows for efficient, key list rendering
+                <For
+                    // `each` takes any function that returns an iterator
+                    // this should usually be a signal or derived signal
+                    // if it's not reactive, just render a Vec<_> instead of <For/>
+                    each=rates
+                    // the key should be unique and stable for each row
+                    // using an index is usually a bad idea, unless your list
+                    // can only grow, because moving items around inside the list
+                    // means their indices will change and they will all rerender
+                    key=|item| item.0._id
+                    // the view function receives each item from your `each` iterator
+                    // and returns a view
+                    view=move |cx, (id, (rate, set_rate))| {
+                        view! { cx,
+                            <RateCard item=rate.get()/>
+                            // <li>
+                            //     <button
+                            //         on:click=move |_| {
+                            //             set_counters.update(|counters| {
+                            //                 counters.retain(|(counter_id, _)| counter_id._id != &id._id.clone())
+                            //             });
+                            //         }
+                            //     >
+                            //         "Remove"
+                            //     </button>
+                            // </li>
                         }
                     }
-                }
-                </Transition>
+                />
         </div>
-
-        <div class="footer">
-         <h1>"Welcome to Leptos!"</h1>
-            <button on:click=on_click>"Click Me: " {count}</button>
-        </div>
-        </div>
-        }
+    }
 }
 
 // #[component]

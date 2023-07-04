@@ -1,20 +1,20 @@
 * {
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   /*   height: 100%;
     width: 100%; */
-	font-family: sans-serif;
-	text-align: center;
- // height: 100%;
- // width: 100%;
-	//max-height: 100vh;
-    //max-width: 100%;
-    //overflow: hidden;
-    margin: 0 auto;
+  font-family: sans-serif;
+  text-align: center;
+  // height: 100%;
+  // width: 100%;
+  //max-height: 100vh;
+  //max-width: 100%;
+  //overflow: hidden;
+  margin: 0 auto;
 }
 
 .rates-view {
@@ -29,11 +29,11 @@ body {
 }
 
 .rates-view .header {
- flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 
 .rates-view .footer {
- flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 
 .rates-view .table-div {
@@ -41,7 +41,8 @@ body {
   padding: 2px;
   background-color: blue;
   // height: calc(100vh - 20px); /* Subtract 20px for padding, margin, etc. */
-  overflow-y: scroll; /* Enable vertical scrolling */
+  overflow-y: scroll;
+  /* Enable vertical scrolling */
 }
 
 .table-data {
@@ -69,3 +70,6 @@ body {
 
 
 
+.red {
+  color: red;
+}

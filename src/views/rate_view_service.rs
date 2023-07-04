@@ -41,4 +41,3 @@ pub struct ViewItemRate {
     pub source: Source,
     pub created_at: String,
 }
-
